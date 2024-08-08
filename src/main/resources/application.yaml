@@ -1,0 +1,5 @@
+conductor:
+  server.url: ${CONDUCTOR_SERVER_URL}
+#  security.client:
+#    key-id: ${CONDUCTOR_AUTH_KEY}
+#    secret: ${CONDUCTOR_AUTH_SECRET}
