@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 public class Worker {
     @WorkerTask(value = "payment-hold")
     public String paymentHold() throws Exception {
-        // if (1==2) throw new Exception("failed to execute worker");
+        // if (2==2) throw new Exception("failed to execute worker");
         return "Payment Hold";
     }
 
