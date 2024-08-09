@@ -1,12 +1,18 @@
 {
-  "name": "payment_processing",
-  "description": "Sample Payment Processing",
+  "createTime": 1723173573116,
+  "updateTime": 0,
+  "name": "payment_transfer",
+  "description": "Workflow to handle ACH payment transfers",
   "version": 1,
   "tasks": [
     {
-      "name": "payment-hold",
-      "taskReferenceName": "payment-hold",
-      "inputParameters": {},
+      "name": "validate_payment_details",
+      "taskReferenceName": "validate_payment",
+      "inputParameters": {
+        "fromAccountId": "${workflow.input.fromAccountId}",
+        "toAccountId": "${workflow.input.toAccountId}",
+        "amount": "${workflow.input.amount}"
+      },
       "type": "SIMPLE",
       "decisionCases": {},
       "defaultCase": [],
@@ -21,9 +27,12 @@
       "permissive": false
     },
     {
-      "name": "debit",
-      "taskReferenceName": "debit",
-      "inputParameters": {},
+      "name": "debit_account",
+      "taskReferenceName": "debit_account",
+      "inputParameters": {
+        "accountId": "${workflow.input.fromAccountId}",
+        "amount": "${workflow.input.amount}"
+      },
       "type": "SIMPLE",
       "decisionCases": {},
       "defaultCase": [],
@@ -38,9 +47,34 @@
       "permissive": false
     },
     {
-      "name": "credit",
-      "taskReferenceName": "credit",
-      "inputParameters": {},
+      "name": "credit_account",
+      "taskReferenceName": "credit_account",
+      "inputParameters": {
+        "accountId": "${workflow.input.toAccountId}",
+        "amount": "${workflow.input.amount}"
+      },
+      "type": "SIMPLE",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": false,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": [],
+      "onStateChange": {},
+      "permissive": false
+    },
+    {
+      "name": "send_notification",
+      "taskReferenceName": "send_notification",
+      "inputParameters": {
+        "fromAccountId": "${workflow.input.fromAccountId}",
+        "toAccountId": "${workflow.input.toAccountId}",
+        "amount": "${workflow.input.amount}",
+        "status": "COMPLETED"
+      },
       "type": "SIMPLE",
       "decisionCases": {},
       "defaultCase": [],
@@ -55,15 +89,23 @@
       "permissive": false
     }
   ],
-  "inputParameters": [],
-  "outputParameters": {},
+  "inputParameters": [
+    "paymentDetails",
+    "fromAccountId",
+    "toAccountId",
+    "amount"
+  ],
+  "outputParameters": {
+    "paymentStatus": "COMPLETED"
+  },
   "schemaVersion": 2,
   "restartable": true,
   "workflowStatusListenerEnabled": false,
-  "ownerEmail": "example@email.com",
-  "timeoutPolicy": "ALERT_ONLY",
-  "timeoutSeconds": 0,
+  "ownerEmail": "viren@orkes.io",
+  "timeoutPolicy": "TIME_OUT_WF",
+  "timeoutSeconds": 240,
   "variables": {},
   "inputTemplate": {},
-  "enforceSchema": true
+  "enforceSchema": false,
+  "failureWorkflow": "ach_payment_transfer_failed"
 }

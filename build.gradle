@@ -27,11 +27,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0"
 	implementation 'io.orkes.conductor:orkes-conductor-client:2.1.4'
-	implementation "org.flywaydb:flyway-core:10.15.2"
-	implementation "org.flywaydb:flyway-database-postgresql:10.15.2"
 	implementation 'org.springframework.retry:spring-retry'
-	implementation "org.springframework.boot:spring-boot-starter-jdbc"
-	implementation 'org.xerial:sqlite-jdbc:3.46.0.1'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
