@@ -1,6 +1,6 @@
 {
-  "createTime": 1723173573116,
-  "updateTime": 0,
+  "createTime": 1723183776932,
+  "updateTime": 1723183519208,
   "name": "payment_transfer",
   "description": "Workflow to handle ACH payment transfers",
   "version": 1,
@@ -19,10 +19,76 @@
       "forkTasks": [],
       "startDelay": 0,
       "joinOn": [],
+      "optional": true,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopOver": [],
+      "onStateChange": {},
+      "permissive": false
+    },
+    {
+      "name": "switch",
+      "taskReferenceName": "switch_ref",
+      "inputParameters": {
+        "switchCaseValue": "${validate_payment.output.status}"
+      },
+      "type": "SWITCH",
+      "decisionCases": {
+        "false": [
+          {
+            "name": "send_notification",
+            "taskReferenceName": "send_notification_failure",
+            "inputParameters": {
+              "fromAccountId": "${workflow.input.fromAccountId}",
+              "toAccountId": "${workflow.input.toAccountId}",
+              "amount": "${workflow.input.amount}",
+              "status": "FAILED"
+            },
+            "type": "SIMPLE",
+            "decisionCases": {},
+            "defaultCase": [],
+            "forkTasks": [],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": false,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopOver": [],
+            "onStateChange": {},
+            "permissive": false
+          },
+          {
+            "name": "terminate",
+            "taskReferenceName": "terminate_ref",
+            "inputParameters": {
+              "terminationStatus": "COMPLETED",
+              "terminationReason": "${validate_payment.output.reason}"
+            },
+            "type": "TERMINATE",
+            "decisionCases": {},
+            "defaultCase": [],
+            "forkTasks": [],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": false,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopOver": [],
+            "onStateChange": {},
+            "permissive": false
+          }
+        ]
+      },
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
       "optional": false,
       "defaultExclusiveJoinTask": [],
       "asyncComplete": false,
       "loopOver": [],
+      "evaluatorType": "value-param",
+      "expression": "switchCaseValue",
       "onStateChange": {},
       "permissive": false
     },
@@ -98,14 +164,14 @@
   "outputParameters": {
     "paymentStatus": "COMPLETED"
   },
+  "failureWorkflow": "ach_payment_transfer_failed",
   "schemaVersion": 2,
   "restartable": true,
   "workflowStatusListenerEnabled": false,
-  "ownerEmail": "viren@orkes.io",
+  "ownerEmail": "user@example.com",
   "timeoutPolicy": "TIME_OUT_WF",
   "timeoutSeconds": 240,
   "variables": {},
   "inputTemplate": {},
-  "enforceSchema": false,
-  "failureWorkflow": "ach_payment_transfer_failed"
+  "enforceSchema": true
 }

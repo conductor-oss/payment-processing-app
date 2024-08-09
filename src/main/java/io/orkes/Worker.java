@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.Random;
 
 @Service
@@ -18,17 +19,19 @@ import java.util.Random;
 @Slf4j
 public class Worker {
     @WorkerTask(value = "validate_payment_details")
-    public void validatePaymentDetails(PaymentTransferRequest request) throws Exception {
-        if(request.getAmount().doubleValue() < 0) {
-            throw new NonRetryableException("Invalid amount " + request.getAmount());
+    public Map<String, Object> validatePaymentDetails(PaymentTransferRequest request) throws Exception {
+        if(request.getAmount().doubleValue() > 1_000) {
+            return Map.of("reason", "Amount exceeded the limit.  Amount: " + request.getAmount(), "status", false);
         }
         int random = new Random().nextInt(10);
+
         //Change the condition to increase/decrease failures
-        if(random < 10) {
+        if(random < 5) {
             throw new RuntimeException("Can't call the API to validate payment details");
         }
 
         //all OK
+        return Map.of("status", true);
     }
 
     @WorkerTask(value = "debit_account")
